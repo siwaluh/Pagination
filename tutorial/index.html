@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Tutorial</title>
+  <link rel='stylesheet' href='../assets/css/style.min.css'>
+  <script src='../assets/js/pagination.min.js'></script>
+</head>
+<body>
+  <h2>1. Array</h2>
+  <p>Pertama ada 9 array.</p>
+  <pre>
+    let array = [1,2,3,4,5,6,7,8,9];
+  </pre>
+  <h2>2. Membagi Array per halaman</h2>
+  <p>Berikut contoh membagi array per halaman menjadi 3 item saja.</p>
+  <pre>
+    let array = [1,2,3,4,5,6,7,8,9],
+      perPage = 3,
+      arrPage = new Pagination().arrayToPage(array, perPage);
+
+    console.log(arrPage);
+  </pre>
+  <p>Hasil nya.</p>
+  <pre>
+    [{
+      'id': 'page-1',
+      'items': [1,2,3]
+    }, {
+      'id': 'page-2',
+      'items': [4,5,6]
+    }, {
+      'id': 'page-3',
+      'items': [7,8,9]
+    }]
+  </pre>
+  <h2>3. Membuat pagination di html</h2>
+  <p>Pertama pasang main html nya tempat content dan pagination akan di tempatkan.</p>
+  <pre>
+    &lt;ul id=&#39;content&#39;&gt;&lt;/ul&gt;
+    &lt;div id=&#39;pagination&#39;&gt;&lt;/div&gt;
+  </pre>
+  <p>Kedua pembuatan script nya.</p>
+  <pre>
+    let array = [1,2,3,4,5,6,7,8,9],
+      perPage = 3;
+
+    let paginationElement, //Global variable khusus pagination element yang akan di buat.
+      contentId = document.getElementById('content'),
+      paginationId = document.getElementById('pagination'),
+
+      // Dalam membuat pagination kita tambahkan paramater object callback untuk membuat html.
+      pagination = new Pagination({
+        'callback': function(mainElement, currentPage, mainArray) {
+
+          // Memperbarui global variable paginationElement
+          paginationElement = {
+            mainElement,
+            currentPage
+          };
+
+          // Menambahkan content halaman ke html
+          if(contentId) {
+            let html = '';
+
+            // currentPage harus di kurangi 1 karena item pertama dalam array adalah 0 bukan 1
+            currentPage = currentPage - 1;
+
+            /* mainArray merupakan array yang awalnya 9 kemudian di bagi menjadi 3 per halaman,
+            Kemudian di gabung dengan currentPage menjadi mainArray[currentPage]. 
+            Jadi misalkan currentPage nilai nya 2 maka item yang di tampilkan adalah [7,8,9].
+            Selanjut nya tinggal di extrack menggunakan foreach */
+
+            mainArray[currentPage].items.forEach(item => {
+              html += `&lt;li&gt;${item}&lt;/li&gt;`;
+            });
+            contentId.innerHTML = html;
+          }
+
+          //Menambahkan pagination ke html
+          if(paginationId) {
+            paginationId.innerHTML = '';
+            paginationId.appendChild(mainElement);
+          }
+
+        }
+      });
+
+    /*Execute Code.
+    Karena saat ini kita akan menambakan pagination ke html, 
+    jadi parameter terakhir kita isi dengan true bukan false*/
+
+    paginationElement = pagination.arrayToPage(array, perPage, true)
+  </pre>
+  <h2>Demo</h2>
+  <div class='align'>
+    <div id='content'></div>
+    <div id='pagination'></div>
+  </div>
+  <script src='./main.js'></script>
+</body>
+</html>
